@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Col, Container, Form, FormGroup, Input, Label, Row, Table } from 'reactstrap'
+import React, { Component, Fragment } from 'react'
+import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row, Table } from 'reactstrap'
 import axios from 'axios'
 class ProductApi extends Component {
     constructor() {
@@ -12,26 +12,46 @@ class ProductApi extends Component {
     save = (e) => {
         e.preventDefault()
     }
+    componentDidMount() {
+        this.getapi()
+    }
     getapi = () => {
-        axios.get('https://student-api.mycodelibraries.com/api/product/get').then((res) => { }).catch((err) => { })
+        axios.get('https://student-api.mycodelibraries.com/api/product/get')
+            .then((res) => {
+                this.state.arr = res.data.data
+                this.setState({ arr: this.state.arr })
+            })
+            .catch((err) => { })
     }
     postapi = () => {
-        axios.post('https://student-api.mycodelibraries.com/api/product/add', this.state.obj).then((res) => { }).catch((err) => { })
-
+        axios.post('https://student-api.mycodelibraries.com/api/product/add', this.state.obj)
+            .then((res) => { })
+            .catch((err) => { })
     }
     updateapi = () => {
         axios.post('https://student-api.mycodelibraries.com/api/product/update', this.state.obj).then((res) => { }).catch((err) => { })
-
     }
     deleteapi = (id) => {
         axios.delete('https://student-api.mycodelibraries.com/api/product/delete?id=' + id).then((res) => { }).catch((err) => { })
-
+    }
+    changeData = (e) => {
+        if (e.target.name === 'clothSize') {
+            this.state.obj.clothSize = [
+                this.state.obj.clothSize ? [...this.state.obj.clothSize] : []
+                , e.target.value
+            ]
+            console.log(this.state.obj.clothSize)
+        }
+        else {
+            this.state.obj[e.target.name] = e.target.value
+        }
+        this.setState({ obj: { ...this.state.obj } })
     }
     render() {
         return (
             <div>
                 <Row>
-                    <Col xs={12} sm={8} md={6}  className="offset-sm-3">
+                    <Col xs={12} sm={8} md={6} className="offset-sm-3">
                         <Container fluid='sm' className="mt-1 py-1 px-4 border border-1 border-black rounded-2 shadow-lg">
                             <h1 className="text-center py-3">Student Form</h1>
                             <Form onSubmit={this.save}>
@@ -41,7 +61,8 @@ class ProductApi extends Component {
                                             <Label for="Category" className="fw-600">
                                                 Category
                                             </Label>
-                                            <select id='Category' className='form-select'>
+                                            <select id='Category' className='form-select'
+                                                onChange={this.changeData}>
                                                 <option value='boys'>Boys</option>
                                                 <option value='girls'>Girls</option>
                                                 <option value='trans'>Trans</option>
@@ -59,6 +80,7 @@ class ProductApi extends Component {
                                                 placeholder="Product Name"
                                                 type="text"
                                                 className="main"
+                                                onChange={this.changeData}
                                             />
 
                                         </FormGroup>
@@ -74,7 +96,7 @@ class ProductApi extends Component {
                                                 placeholder="description"
                                                 type="text"
                                                 className="main"
-
+                                                onChange={this.changeData}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -89,6 +111,7 @@ class ProductApi extends Component {
                                                 placeholder="Price"
                                                 type="number"
                                                 className="main"
+                                                onChange={this.changeData}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -105,6 +128,7 @@ class ProductApi extends Component {
                                                     type="radio"
                                                     className="gender me-2"
                                                     value='InStock'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -120,11 +144,14 @@ class ProductApi extends Component {
                                                     name="inStock"
                                                     type="radio"
                                                     className="gender me-2"
+                                                    onChange={this.changeData}
+                                                    value='notInStock'
                                                 />
                                                 <Label
                                                     check
                                                     for="radiotwo"
                                                     className="px-2"
+                                                    onChange={this.changeData}
                                                 >
                                                     Not in Stock
                                                 </Label>
@@ -140,13 +167,14 @@ class ProductApi extends Component {
                                             Cloth Size
                                         </Label>
                                         <Row className="">
-                                            <Col  xs={6} md={2}>
+                                            <Col xs={6} md={2}>
                                                 <Input
                                                     id="XXL"
                                                     name="clothSize"
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='XXl'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -157,13 +185,14 @@ class ProductApi extends Component {
                                                 </Label>
                                             </Col>
 
-                                            <Col  xs={6} md={2}>
+                                            <Col xs={6} md={2}>
                                                 <Input
                                                     id="XL"
                                                     name="clothSize"
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='XL'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -181,6 +210,7 @@ class ProductApi extends Component {
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='L'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -190,13 +220,14 @@ class ProductApi extends Component {
                                                     L
                                                 </Label>
                                             </Col>
-                                            <Col  xs={6} md={2}>
+                                            <Col xs={6} md={2}>
                                                 <Input
                                                     id="M"
                                                     name="clothSize"
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='M'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -214,6 +245,7 @@ class ProductApi extends Component {
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='S'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -237,23 +269,36 @@ class ProductApi extends Component {
                 </Row>
                 <div className="container bg-body-secondary mt-3">
                     <h2 className='text-center py-3'>Form</h2>
-                    <Table className="">
-                        <thead>
-                            <tr>
-                                <th>Sr No</th>
-                                <th>Category</th>
-                                <th>Product Name</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Cloth Size</th>
-                                <th>In Stock</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </Table>
+                    <Row>
+                        {this.state.arr.map((x, i) => {
+                            return (
+                                <Col xs={4} key={i}>
+                                    <Card>
+                                        <CardBody>
+                                            <CardTitle tag="h5">
+                                                {x.category}
+                                            </CardTitle>
+                                            <CardSubtitle
+                                                className="mb-2 text-muted"
+                                                tag="h6"
+                                            >
+                                                {x.productName}
+                                                {x.price}
+                                                {x.clothSize}
+                                                {x.inStock}
+                                            </CardSubtitle>
+                                            <CardText>
+                                                Some quick example text to build on the card title and make up the bulk of the card‘s content.
+                                            </CardText>
+                                            <Button>
+                                                Button
+                                            </Button>
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            )
+                        })}
+                    </Row>
                 </div>
             </div>
         )
