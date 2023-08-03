@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react'
 import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row, Table } from 'reactstrap'
 import axios from 'axios'
+import { FiEdit } from 'react-icons/fi'
+import { MdDeleteSweep } from 'react-icons/md'
 class ProductApi extends Component {
     constructor() {
         super()
@@ -11,6 +13,12 @@ class ProductApi extends Component {
     }
     save = (e) => {
         e.preventDefault()
+        if (this.state.obj._id === undefined) {
+            this.postapi()
+        }
+        else {
+            this.updateapi()
+        }
     }
     componentDidMount() {
         this.getapi()
@@ -25,22 +33,38 @@ class ProductApi extends Component {
     }
     postapi = () => {
         axios.post('https://student-api.mycodelibraries.com/api/product/add', this.state.obj)
-            .then((res) => { })
+            .then((res) => {
+                this.getapi()
+                this.setState({ obj: {} })
+            })
             .catch((err) => { })
     }
     updateapi = () => {
-        axios.post('https://student-api.mycodelibraries.com/api/product/update', this.state.obj).then((res) => { }).catch((err) => { })
+        this.state.obj.id = this.state.obj._id;
+        axios.post('https://student-api.mycodelibraries.com/api/product/update', this.state.obj).then((res) => {
+            this.getapi()
+            this.setState({ obj: {} })
+        }).catch((err) => { })
+    }
+    editFunction = (id) => {
+        axios.get('https://student-api.mycodelibraries.com/api/product/get-product-by-id?id=' + id).then((res) => {
+            res.data.data.clothSize = res.data.data.clothSize.split(",")
+            this.setState({ obj: { ...res.data.data } })
+        })
+            .catch((err) => { })
     }
     deleteapi = (id) => {
-        axios.delete('https://student-api.mycodelibraries.com/api/product/delete?id=' + id).then((res) => { }).catch((err) => { })
+        axios.delete('https://student-api.mycodelibraries.com/api/product/delete?id=' + id).then((res) => { this.getapi() }).catch((err) => { })
     }
     changeData = (e) => {
         if (e.target.name === 'clothSize') {
-            this.state.obj.clothSize = [
-                this.state.obj.clothSize ? [...this.state.obj.clothSize] : []
-                , e.target.value
-            ]
-            console.log(this.state.obj.clothSize)
+            if (e.target.checked) {
+                this.state.obj.clothSize =
+                    this.state.obj.clothSize ? [...this.state.obj.clothSize, e.target.value] : [e.target.value]
+            }
+            else {
+                this.state.obj.clothSize = this.state.obj.clothSize.filter((x) => x !== e.target.value)
+            }
         }
         else {
             this.state.obj[e.target.name] = e.target.value
@@ -62,10 +86,10 @@ class ProductApi extends Component {
                                                 Category
                                             </Label>
                                             <select id='Category' className='form-select'
-                                                onChange={this.changeData}>
-                                                <option value='boys'>Boys</option>
-                                                <option value='girls'>Girls</option>
-                                                <option value='trans'>Trans</option>
+                                                onChange={this.changeData} name='category'>
+                                                <option value='boys' selected={this.state.obj.category?.includes('boys')}>Boys</option>
+                                                <option value='girls' selected={this.state.obj.category?.includes('girls')}>Girls</option>
+                                                <option value='trans' selected={this.state.obj.category?.includes('trans')}>Trans</option>
                                             </select>
                                         </FormGroup>
                                     </Col>
@@ -81,8 +105,8 @@ class ProductApi extends Component {
                                                 type="text"
                                                 className="main"
                                                 onChange={this.changeData}
+                                                value={this.state.obj.productName || ''}
                                             />
-
                                         </FormGroup>
                                     </Col>
                                     <Col md={6}>
@@ -97,6 +121,7 @@ class ProductApi extends Component {
                                                 type="text"
                                                 className="main"
                                                 onChange={this.changeData}
+                                                value={this.state.obj.description || ''}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -112,6 +137,7 @@ class ProductApi extends Component {
                                                 type="number"
                                                 className="main"
                                                 onChange={this.changeData}
+                                                value={this.state.obj.price || ''}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -127,8 +153,9 @@ class ProductApi extends Component {
                                                     name="inStock"
                                                     type="radio"
                                                     className="gender me-2"
-                                                    value='InStock'
+                                                    value='inStock'
                                                     onChange={this.changeData}
+                                                    checked={this.state.obj.inStock?.includes('inStock') || false}
                                                 />
                                                 <Label
                                                     check
@@ -146,12 +173,12 @@ class ProductApi extends Component {
                                                     className="gender me-2"
                                                     onChange={this.changeData}
                                                     value='notInStock'
+                                                    checked={this.state.obj.inStock?.includes('notInStock') || false}
                                                 />
                                                 <Label
                                                     check
                                                     for="radiotwo"
                                                     className="px-2"
-                                                    onChange={this.changeData}
                                                 >
                                                     Not in Stock
                                                 </Label>
@@ -175,6 +202,7 @@ class ProductApi extends Component {
                                                     className="me-2"
                                                     value='XXl'
                                                     onChange={this.changeData}
+                                                    checked={this.state.obj.clothSize?.includes('XXl')}
                                                 />
                                                 <Label
                                                     check
@@ -193,6 +221,7 @@ class ProductApi extends Component {
                                                     className="me-2"
                                                     value='XL'
                                                     onChange={this.changeData}
+                                                    checked={this.state.obj.clothSize?.includes('XL')}
                                                 />
                                                 <Label
                                                     check
@@ -211,6 +240,8 @@ class ProductApi extends Component {
                                                     className="me-2"
                                                     value='L'
                                                     onChange={this.changeData}
+                                                    checked={this.state.obj.clothSize?.includes('L')}
+
                                                 />
                                                 <Label
                                                     check
@@ -228,6 +259,8 @@ class ProductApi extends Component {
                                                     className="me-2"
                                                     value='M'
                                                     onChange={this.changeData}
+                                                    checked={this.state.obj.clothSize?.includes('M')}
+
                                                 />
                                                 <Label
                                                     check
@@ -246,6 +279,7 @@ class ProductApi extends Component {
                                                     className="me-2"
                                                     value='S'
                                                     onChange={this.changeData}
+                                                    checked={this.state.obj.clothSize?.includes('S')}
                                                 />
                                                 <Label
                                                     check
@@ -268,31 +302,25 @@ class ProductApi extends Component {
                     </Col>
                 </Row>
                 <div className="container bg-body-secondary mt-3">
-                    <h2 className='text-center py-3'>Form</h2>
-                    <Row>
+                    <h2 className='text-center py-3'>Products</h2>
+                    <Row className='g-2'>
                         {this.state.arr.map((x, i) => {
                             return (
                                 <Col xs={4} key={i}>
                                     <Card>
+                                        <div className='d-flex justify-content-between my-2 card-header'>
+                                            <MdDeleteSweep className='me-2 fs-1 text-bg-danger rounded' onClick={() => this.deleteapi(x._id)} />
+                                            <FiEdit className='fs-2 text-bg-warning rounded ' onClick={() => this.editFunction(x._id)} />
+                                        </div>
                                         <CardBody>
-                                            <CardTitle tag="h5">
-                                                {x.category}
-                                            </CardTitle>
-                                            <CardSubtitle
-                                                className="mb-2 text-muted"
-                                                tag="h6"
-                                            >
-                                                {x.productName}
-                                                {x.price}
-                                                {x.clothSize}
-                                                {x.inStock}
-                                            </CardSubtitle>
-                                            <CardText>
-                                                Some quick example text to build on the card title and make up the bulk of the card‘s content.
-                                            </CardText>
-                                            <Button>
-                                                Button
-                                            </Button>
+                                            <h1 className='fs-3 fw-1 text-center'>{x.productName}</h1>
+                                            <div className='d-flex justify-content-between'>
+                                                <h5>Price={x.price}Rs</h5>
+                                                <h5>Category={x.category}</h5>
+                                            </div>
+                                            <div>
+                                                <h4>Stock={x.inStock}</h4>
+                                            </div>
                                         </CardBody>
                                     </Card>
                                 </Col>
