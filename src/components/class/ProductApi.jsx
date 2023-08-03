@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Col, Container, Form, FormGroup, Input, Label, Row, Table } from 'reactstrap'
+import React, { Component, Fragment } from 'react'
+import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row, Table } from 'reactstrap'
 import axios from 'axios'
 class ProductApi extends Component {
     constructor() {
@@ -11,27 +11,35 @@ class ProductApi extends Component {
     }
     save = (e) => {
         e.preventDefault()
+
+    }
+    componentDidMount() {
+        this.getapi()
     }
     getapi = () => {
-        axios.get('https://student-api.mycodelibraries.com/api/product/get').then((res) => { }).catch((err) => { })
+        axios.get('https://student-api.mycodelibraries.com/api/product/get')
+            .then((res) => {
+                this.state.arr = res.data.data
+                this.setState({ arr: this.state.arr })
+            })
+            .catch((err) => { })
     }
     postapi = () => {
-        axios.post('https://student-api.mycodelibraries.com/api/product/add', this.state.obj).then((res) => { }).catch((err) => { })
-
+        axios.post('https://student-api.mycodelibraries.com/api/product/add', this.state.obj)
+            .then((res) => { })
+            .catch((err) => { })
     }
     updateapi = () => {
         axios.post('https://student-api.mycodelibraries.com/api/product/update', this.state.obj).then((res) => { }).catch((err) => { })
-
     }
     deleteapi = (id) => {
         axios.delete('https://student-api.mycodelibraries.com/api/product/delete?id=' + id).then((res) => { }).catch((err) => { })
-
     }
     render() {
         return (
             <div>
                 <Row>
-                    <Col xs={12} sm={8} md={6}  className="offset-sm-3">
+                    <Col xs={12} sm={8} md={6} className="offset-sm-3">
                         <Container fluid='sm' className="mt-1 py-1 px-4 border border-1 border-black rounded-2 shadow-lg">
                             <h1 className="text-center py-3">Student Form</h1>
                             <Form onSubmit={this.save}>
@@ -140,7 +148,7 @@ class ProductApi extends Component {
                                             Cloth Size
                                         </Label>
                                         <Row className="">
-                                            <Col  xs={6} md={2}>
+                                            <Col xs={6} md={2}>
                                                 <Input
                                                     id="XXL"
                                                     name="clothSize"
@@ -157,7 +165,7 @@ class ProductApi extends Component {
                                                 </Label>
                                             </Col>
 
-                                            <Col  xs={6} md={2}>
+                                            <Col xs={6} md={2}>
                                                 <Input
                                                     id="XL"
                                                     name="clothSize"
@@ -190,7 +198,7 @@ class ProductApi extends Component {
                                                     L
                                                 </Label>
                                             </Col>
-                                            <Col  xs={6} md={2}>
+                                            <Col xs={6} md={2}>
                                                 <Input
                                                     id="M"
                                                     name="clothSize"
@@ -237,23 +245,37 @@ class ProductApi extends Component {
                 </Row>
                 <div className="container bg-body-secondary mt-3">
                     <h2 className='text-center py-3'>Form</h2>
-                    <Table className="">
-                        <thead>
-                            <tr>
-                                <th>Sr No</th>
-                                <th>Category</th>
-                                <th>Product Name</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Cloth Size</th>
-                                <th>In Stock</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </Table>
+                    <Row>
+                        {this.state.arr.map((x, i) => {
+                            return (
+                                <Col xs={4} key={i}>
+                                    {console.log(x)}
+                                    <Card>
+                                        <CardBody>
+                                            <CardTitle tag="h5">
+                                                {x.category}
+                                            </CardTitle>
+                                            <CardSubtitle
+                                                className="mb-2 text-muted"
+                                                tag="h6"
+                                            >
+                                                {x.productName}
+                                                {x.price}
+                                                {x.clothSize}
+                                                {x.inStock}
+                                            </CardSubtitle>
+                                            <CardText>
+                                                Some quick example text to build on the card title and make up the bulk of the card‘s content.
+                                            </CardText>
+                                            <Button>
+                                                Button
+                                            </Button>
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            )
+                        })}
+                    </Row>
                 </div>
             </div>
         )
