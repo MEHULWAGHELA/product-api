@@ -11,7 +11,6 @@ class ProductApi extends Component {
     }
     save = (e) => {
         e.preventDefault()
-
     }
     componentDidMount() {
         this.getapi()
@@ -35,6 +34,19 @@ class ProductApi extends Component {
     deleteapi = (id) => {
         axios.delete('https://student-api.mycodelibraries.com/api/product/delete?id=' + id).then((res) => { }).catch((err) => { })
     }
+    changeData = (e) => {
+        if (e.target.name === 'clothSize') {
+            this.state.obj.clothSize = [
+                this.state.obj.clothSize ? [...this.state.obj.clothSize] : []
+                , e.target.value
+            ]
+            console.log(this.state.obj.clothSize)
+        }
+        else {
+            this.state.obj[e.target.name] = e.target.value
+        }
+        this.setState({ obj: { ...this.state.obj } })
+    }
     render() {
         return (
             <div>
@@ -49,7 +61,8 @@ class ProductApi extends Component {
                                             <Label for="Category" className="fw-600">
                                                 Category
                                             </Label>
-                                            <select id='Category' className='form-select'>
+                                            <select id='Category' className='form-select'
+                                                onChange={this.changeData}>
                                                 <option value='boys'>Boys</option>
                                                 <option value='girls'>Girls</option>
                                                 <option value='trans'>Trans</option>
@@ -67,6 +80,7 @@ class ProductApi extends Component {
                                                 placeholder="Product Name"
                                                 type="text"
                                                 className="main"
+                                                onChange={this.changeData}
                                             />
 
                                         </FormGroup>
@@ -82,7 +96,7 @@ class ProductApi extends Component {
                                                 placeholder="description"
                                                 type="text"
                                                 className="main"
-
+                                                onChange={this.changeData}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -97,6 +111,7 @@ class ProductApi extends Component {
                                                 placeholder="Price"
                                                 type="number"
                                                 className="main"
+                                                onChange={this.changeData}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -113,6 +128,7 @@ class ProductApi extends Component {
                                                     type="radio"
                                                     className="gender me-2"
                                                     value='InStock'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -128,11 +144,14 @@ class ProductApi extends Component {
                                                     name="inStock"
                                                     type="radio"
                                                     className="gender me-2"
+                                                    onChange={this.changeData}
+                                                    value='notInStock'
                                                 />
                                                 <Label
                                                     check
                                                     for="radiotwo"
                                                     className="px-2"
+                                                    onChange={this.changeData}
                                                 >
                                                     Not in Stock
                                                 </Label>
@@ -155,6 +174,7 @@ class ProductApi extends Component {
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='XXl'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -172,6 +192,7 @@ class ProductApi extends Component {
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='XL'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -189,6 +210,7 @@ class ProductApi extends Component {
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='L'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -205,6 +227,7 @@ class ProductApi extends Component {
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='M'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -222,6 +245,7 @@ class ProductApi extends Component {
                                                     type="checkbox"
                                                     className="me-2"
                                                     value='S'
+                                                    onChange={this.changeData}
                                                 />
                                                 <Label
                                                     check
@@ -249,7 +273,6 @@ class ProductApi extends Component {
                         {this.state.arr.map((x, i) => {
                             return (
                                 <Col xs={4} key={i}>
-                                    {console.log(x)}
                                     <Card>
                                         <CardBody>
                                             <CardTitle tag="h5">
