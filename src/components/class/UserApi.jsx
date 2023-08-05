@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { Col, Container, Form, FormGroup, Input, Label, Row, Table } from 'reactstrap'
 const UserApi = () => {
     let [arr, setarr] = useState([])
     let [obj, setobj] = useState({ hobbies: '' })
+    let reference = useRef()
     /* api methods are different type. Which is created by backend developer
     Mostly 4 to 5 api method available
     1=>getapi
@@ -45,14 +46,16 @@ const UserApi = () => {
 
     const setData = () => {
         let formdata = new FormData()
-        formdata.append('userImage', obj.profile)
+        formdata.append('userImage', obj.userImage)
         formdata.append('firstName', obj.firstName)
         formdata.append('lastName', obj.lastName)
         formdata.append('age', obj.age)
         formdata.append('city', obj.city)
         formdata.append('gender', obj.gender)
         formdata.append('hobbies', obj.hobbies)
-        console.log(formdata)
+        for (let x of formdata.entries()) {
+            console.log(x)
+        }
         axios.post('https://student-api.mycodelibraries.com/api/user/add', formdata)
             .then((res) => {
                 console.log(res)
@@ -122,6 +125,7 @@ const UserApi = () => {
         }
         obj = { hobbies: '' }
         setobj({ ...obj })
+        reference.current.value = ''
     }
     return (
         <div>
@@ -177,7 +181,6 @@ const UserApi = () => {
                                             className="main"
                                             onChange={changeData}
                                             value={obj.age || ''}
-
                                         />
                                     </FormGroup>
                                 </Col>
@@ -301,21 +304,24 @@ const UserApi = () => {
                                                 Exersice
                                             </Label>
                                         </Col>
-                                        <Col xs={3}>
-                                            <Input
-                                                id="userImage"
-                                                name="userImage"
-                                                type="file"
-                                                className="language me-2"
-                                                onChange={changeData}
-                                            />
+                                    </Row>
+                                    <Row className='py-2'>
+                                        <Col xs={12}>
                                             <Label
                                                 check
                                                 for="Exersice"
-                                                className="px-2"
+                                                className="py-2"
                                             >
-                                                Exersice
+                                                Profile
                                             </Label>
+                                            <input
+                                                id="userImage"
+                                                name="userImage"
+                                                type="file"
+                                                className="language me-2 form-control"
+                                                onChange={changeData}
+                                                ref={reference}
+                                            />
                                         </Col>
                                     </Row>
                                 </Col>
@@ -348,10 +354,9 @@ const UserApi = () => {
                     <tbody>
                         {arr?.map((x, i) => {
                             return <tr key={i + 1}>
-                                {console.log(x)}
                                 <td>{i + 1}</td>
                                 <td>
-                                    <img src={x.userImage} alt="" width={40} height={40} />
+                                    <img src={x.image} alt="" width={40} height={40} />
                                 </td>
                                 <td>{x.firstName}</td>
                                 <td>{x.lastName}</td>
