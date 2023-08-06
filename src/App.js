@@ -5,6 +5,7 @@ import ClassApi from "./components/class/ClassApi";
 import ProductApi from "./components/class/ProductApi";
 import UserApi from "./components/class/UserApi";
 import FetchApi from "./components/class/FetchApi";
+import TokenApi from "./components/function/TokenApi";
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
       {/* <ClassApi /> */}
       {/* <ProductApi /> */}
       {/* <UserApi /> */}
-      <FetchApi />
+      {/* <FetchApi /> */}
+      <TokenApi />
     </div>
   );
 }
