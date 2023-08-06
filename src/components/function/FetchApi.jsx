@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import {
   Col,
   Container,
@@ -61,12 +60,11 @@ const FetchApi = () => {
     formdata.append("city", obj.city);
     formdata.append("gender", obj.gender);
     formdata.append("hobbies", obj.hobbies);
-    for (let x of formdata.entries()) {
-      console.log(x);
-    }
     fetch(
-      "https://student-api.mycodelibraries.com/api/user/add",
-      JSON.stringify(formdata)
+      "https://student-api.mycodelibraries.com/api/user/add", {
+      method: 'POST',
+      body: formdata
+    }
     )
       .then((res) => {
         getData();
@@ -83,10 +81,9 @@ const FetchApi = () => {
       .catch((err) => console.log(err));
   };
   const deleteapi = (a) => {
-    a = `https://student-api.mycodelibraries.com/api/user/delete?id=${a}`;
-    fetch(a)
-      .then((res) => {
-        getData();
+    fetch('https://student-api.mycodelibraries.com/api/student/delete?id=' + a, { method: 'DELETE' })
+      .then(async (res) => {
+        await getData();
       })
       .catch((err) => console.log(err));
   };
